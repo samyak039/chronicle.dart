@@ -17,7 +17,10 @@ class StackParser {
   /// column number, where the [Chronicle] was called
   late final int? column;
 
-  StackParser(StackTrace stackTrace) {
+  /// Delimiter inside name
+  final String _;
+
+  StackParser(StackTrace stackTrace, [this._ = ':']) {
     List<String> st = stackTrace.toString().split('\n');
     final String info = st[M.fileInfo];
 
@@ -32,7 +35,8 @@ class StackParser {
     final List<String> functionInfo =
         info.substring(functionInfoStarts, functionInfoEnd).trim().split('.');
     function = functionInfo.last;
-    if (functionInfo.first != function) classs = functionInfo.first;
+    classs = (functionInfo.first != function) ? functionInfo.first : null;
+    // if (functionInfo.first != function) classs = functionInfo.first;
 
     line = int.tryParse(info.split(':')[M.line]);
     column = int.tryParse(info.split(':')[M.column].replaceFirst(')', ''));
@@ -48,39 +52,32 @@ class StackParser {
       'column: $column'
       ')';
 
-  String get name {
+  String get deepName {
     String nm = '';
 
-    if (classs != null) nm += '$classs::';
+    if (classs != null) nm += '$classs$_$_';
     if (function != null) nm += '$function';
+    if (line != null) nm += '$_$line';
 
     return nm;
   }
 
-  String get longName {
+  String get deeperName {
     String nm = '';
 
-    if (file != null) nm += '$file::';
-    nm += _nameWithLineColumn;
+    if (file != null) nm += '$file$_$_';
+    nm += deepName;
+    if (column != null) nm += '$_$column';
 
     return nm;
   }
 
-  String get extraLongName {
+  String get deepestName {
     String nm = '';
 
-    if (path != null) nm += '$path::';
-    nm += _nameWithLineColumn;
-
-    return nm;
-  }
-
-  String get _nameWithLineColumn {
-    String nm = '';
-
-    nm += name;
-    if (line != null) nm += ':$line';
-    if (column != null) nm += ':$column';
+    if (path != null) nm += '$path$_$_';
+    nm += deepName;
+    if (column != null) nm += '$_$column';
 
     return nm;
   }

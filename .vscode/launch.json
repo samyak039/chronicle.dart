@@ -1,10 +1,17 @@
 {
   "configurations": [
-  {
-    "name": "Dart",
-    "type": "dart",
-    "request": "launch",
-    "program": "${file}"
-  }
+    {
+      "name": "Dart",
+      "type": "dart",
+      "request": "launch",
+      "program": "${file}"
+    },
+    {
+      "name": "Dart: Run all Tests",
+      "type": "dart",
+      "request": "launch",
+      "program": "./test/",
+      "noDebug": true
+    }
   ]
 }
